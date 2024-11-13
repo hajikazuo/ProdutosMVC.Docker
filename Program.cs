@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<IRepository, ProdutoRepository>();
+builder.Services.AddTransient<IRepository, ProdutoRepository>();
 
 var host = builder.Configuration["DBHOST"] ?? "localhost";
 var port = builder.Configuration["DBPORT"] ?? "3306";
@@ -17,8 +17,7 @@ string mySqlConnection = $"server={host};userid=root;pwd={password};"
                          + $"port={port};database=produtosdb";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-                              options.UseMySql(mySqlConnection,
-                              ServerVersion.AutoDetect(mySqlConnection)));
+    options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
 var app = builder.Build();
 
@@ -32,8 +31,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
-Populadb.IncluiDadosDB(app);
 
 app.UseRouting();
 
